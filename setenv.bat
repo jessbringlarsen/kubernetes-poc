@@ -1,0 +1,1 @@
+call cfg adoptiumopenjdk 17
