@@ -55,8 +55,13 @@ public class JobCommand implements Callable<Integer> {
     }
 
     @Command(name = "pods", description = "Show pods")
-    public void pods() throws Exception {
+    public void pods(@Option(names = "--metadata", description = "Show metadata", required = false) boolean showMetadata) throws Exception {
         List<V1Pod> pods = getApi().listNamespacedPod("default", "false", null, null, null, null, null, null, null, null, null).getItems();
-        pods.forEach(pod -> System.out.println(pod.getMetadata()));
+        if (showMetadata) {
+            pods.forEach(pod -> System.out.println(pod.getMetadata()));
+        } else {
+            pods.forEach(pod -> System.out.println(pod.getMetadata().getName()));
+        }
+
     }
 }
