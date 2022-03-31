@@ -54,7 +54,7 @@ public class JobCommand implements Callable<Integer> {
     }
 
     private Optional<V1Pod> getPodWithNameOrFirst(String pod, List<V1Pod> pods) {
-        if (pod == null) {
+        if (pod != null) {
             return pods.stream()
                 .filter(p -> p.getMetadata().getName().equals(pod))
                 .findFirst();
