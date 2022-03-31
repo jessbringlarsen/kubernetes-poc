@@ -33,7 +33,6 @@ public class JobCommand implements Callable<Integer> {
 
     @Command(name = "logs", description = "Prints logs from a pod")
     public void logs(@Option(names = "--pod", description = "Name of pod", required = true) String pod) throws Exception {
-
         PodLogs logs = new PodLogs();
         List<V1Pod> pods = getApi().listNamespacedPod("default", "false", null, null, null, null, null, null, null, null, null).getItems();
         Optional<V1Pod> v1Pod = pods.stream()
@@ -55,8 +54,9 @@ public class JobCommand implements Callable<Integer> {
         return new CoreV1Api(client);
     }
 
-    @Command(name = "pods", description = "Prints pods in job")
-    public void pods(@Option(names = {"--job"}, description = "Name of job", required = true) String job) throws Exception {
-
+    @Command(name = "pods", description = "Show pods")
+    public void pods() throws Exception {
+        List<V1Pod> pods = getApi().listNamespacedPod("default", "false", null, null, null, null, null, null, null, null, null).getItems();
+        pods.forEach(pod -> System.out.println(pod.getMetadata()));
     }
 }
