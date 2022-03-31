@@ -29,39 +29,47 @@ public class JobCommand implements Callable<Integer> {
 
     @Command(name = "show", description = "Show stats about a Kubernetes jobs")
     public void show(@Option(names = {"--job"}, description = "Name of job", required = true) String job) {
+
     }
 
     @Command(name = "logs", description = "Prints logs from a pod")
-    public void logs(@Option(names = "--pod", description = "Name of pod", required = true) String pod) throws Exception {
-        PodLogs logs = new PodLogs();
-        List<V1Pod> pods = getApi().listNamespacedPod("default", "false", null, null, null, null, null, null, null, null, null).getItems();
-        Optional<V1Pod> v1Pod = pods.stream()
-            .filter(p -> p.getMetadata().getName().equals(pod))
-            .findFirst();
-
+    public void logs(@Option(names = "--pod", description = "Name of pod", required = false) String pod) throws Exception {
+        Optional<V1Pod> v1Pod = getPodWithNameOrFirst(pod, getPods());
         if (v1Pod.isEmpty()) {
             System.out.println("Pod not found: " + pod);
             System.exit(1);
         }
-
-        InputStream is = logs.streamNamespacedPodLog(v1Pod.get());
+        InputStream is = new PodLogs().streamNamespacedPodLog(v1Pod.get());
         Streams.copy(is, System.out);
+    }
+
+    @Command(name = "pods", description = "Show pods")
+    public void pods(@Option(names = "--metadata", description = "Show metadata", required = false) boolean showMetadata) throws Exception {
+        List<V1Pod> pods = getPods();
+        if (showMetadata) {
+            pods.forEach(pod -> System.out.println(pod.getMetadata()));
+        } else {
+            pods.forEach(pod -> System.out.println(pod.getMetadata().getName()));
+        }
+    }
+
+    private Optional<V1Pod> getPodWithNameOrFirst(String pod, List<V1Pod> pods) {
+        if (pod == null) {
+            return pods.stream()
+                .filter(p -> p.getMetadata().getName().equals(pod))
+                .findFirst();
+        }
+        return pods.stream()
+            .findFirst();
+    }
+
+    private List<V1Pod> getPods() throws Exception {
+        return getApi().listNamespacedPod("default", "false", null, null, null, null, null, null, null, null, null).getItems();
     }
 
     private CoreV1Api getApi() throws IOException {
         ApiClient client = Config.defaultClient();
         Configuration.setDefaultApiClient(client);
         return new CoreV1Api(client);
-    }
-
-    @Command(name = "pods", description = "Show pods")
-    public void pods(@Option(names = "--metadata", description = "Show metadata", required = false) boolean showMetadata) throws Exception {
-        List<V1Pod> pods = getApi().listNamespacedPod("default", "false", null, null, null, null, null, null, null, null, null).getItems();
-        if (showMetadata) {
-            pods.forEach(pod -> System.out.println(pod.getMetadata()));
-        } else {
-            pods.forEach(pod -> System.out.println(pod.getMetadata().getName()));
-        }
-
     }
 }
