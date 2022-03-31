@@ -59,8 +59,7 @@ public class JobCommand implements Callable<Integer> {
                 .filter(p -> p.getMetadata().getName().equals(pod))
                 .findFirst();
         }
-        return pods.stream()
-            .findFirst();
+        return Optional.of(pods.get(0));
     }
 
     private List<V1Pod> getPods() throws Exception {
