@@ -43,7 +43,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>dk.commentor.kubernetes.poc.Application</mainClass>
+                            <mainClass>dk.commentor.kubernetes.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
