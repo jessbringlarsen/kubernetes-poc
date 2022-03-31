@@ -9,7 +9,7 @@ import io.kubernetes.client.openapi.models.V1Job;
 import io.kubernetes.client.openapi.models.V1JobList;
 import io.kubernetes.client.util.Config;
 
-public class BatchAPI {
+public class BatchApi {
 
     public V1JobList getJobList() throws Exception {
         return getAPI().listNamespacedJob("default", "true", null, null, null, null, null, null, null, null, null);

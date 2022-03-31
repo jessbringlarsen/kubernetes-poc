@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-import dk.commentor.kubernetes.api.BatchAPI;
-import dk.commentor.kubernetes.api.CoreAPI;
+import dk.commentor.kubernetes.api.BatchApi;
+import dk.commentor.kubernetes.api.CoreApi;
+import dk.commentor.kubernetes.api.EventApi;
 import io.kubernetes.client.PodLogs;
 import io.kubernetes.client.openapi.models.V1Job;
 import io.kubernetes.client.openapi.models.V1JobList;
@@ -18,12 +19,12 @@ import picocli.CommandLine.Option;
 @Command(name = "job", description = "Show Kubernetes jobs", mixinStandardHelpOptions = true)
 public class JobCommand implements Callable<Integer> {
 
-    private final CoreAPI coreAPI = new CoreAPI();
-    private final BatchAPI batchApi = new BatchAPI();
+    private final CoreApi coreAPI = new CoreApi();
+    private final BatchApi batchApi = new BatchApi();
+    private final EventApi eventApi = new EventApi();
 
     @Override
     public Integer call() {
-        System.out.println("jobs...");
         return 0;
     }
 
@@ -64,5 +65,10 @@ public class JobCommand implements Callable<Integer> {
         } else {
             pods.forEach(pod -> System.out.println(pod.getMetadata().getName()));
         }
+    }
+
+    @Command(name = "events", description = "List events")
+    public void events() throws Exception {
+        eventApi.list().forEach(event -> System.out.println(event.getMetadata().getName()));
     }
 }

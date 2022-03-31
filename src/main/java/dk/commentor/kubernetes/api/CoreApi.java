@@ -10,7 +10,7 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.util.Config;
 
-public class CoreAPI {
+public class CoreApi {
 
     public List<V1Pod> getPods() throws Exception {
         return getCoreApi().listNamespacedPod("default", "true", null, null, null, null, null, null, null, null, null).getItems();
