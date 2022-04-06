@@ -1,10 +1,13 @@
 # Specify BROKER_URL and QUEUE when running
 FROM ubuntu:18.04
 
-RUN apt-get update && \
-    apt-get install -y curl ca-certificates amqp-tools python \
-       --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-COPY ./worker.py /worker.py
+WORKDIR /work
 
-CMD  /usr/bin/amqp-consume --url=$BROKER_URL -q $QUEUE -c 1 /worker.py
+RUN apt-get update && \
+    apt-get install -y curl ca-certificates amqp-tools python3 python3-pip\
+       --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/* \
+    && python3 -m pip install pika --upgrade
+COPY worker.py worker.py
+RUN chmod +x /work/worker.py
+CMD ["python3", "/work/worker.py"]
