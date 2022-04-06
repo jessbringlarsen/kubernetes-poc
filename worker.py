@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 
-# Just prints standard out and sleeps for 10 seconds.
-import sys
-import time
+import sys, time, pika
 
-data = sys.stdin.readlines()[0]
-print("Processing: " + data)
+connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq-service'))
+channel = connection.channel()
 
-time.sleep(10)
+channel.basic_consume(queue='job1',
+                      auto_ack=True,
+                      on_message_callback=callback)
+
+def callback(ch, method, properties, body):
+    print(" [x] Received %r" % body)
+    time.sleep(10)
+
+channel.start_consuming()
